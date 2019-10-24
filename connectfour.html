@@ -110,10 +110,14 @@
         if(this.playerOne.isCurrentPlayer == true){
           this.board[row].splice(playerMove,1,"R")
           this.playerOne.numOfMoves += 1
+          this.playerOne.isCurrentPlayer = false
+          this.playerTwo.isCurrentPlayer = true
         }
         else{
           this.board[row].splice(playerMove,1,"Y")
           this.playerOne.numOfMoves += 1
+          this.playerTwo.isCurrentPlayer = false
+          this.playerOne.isCurrentPlayer = true
           }
 
 
@@ -179,18 +183,29 @@
             [0,0,0],
             ["R",0,0]
           ]
-
+        //set to 0 for testing purposes
         playerGoes = 0
+        newGame.makeAMove(playerGoes)
         })
 
         it("displays the player's counter in the 2D array", () => {
-          expect(newGame.makeAMove(playerGoes)).to.deep.equal(templBoard)
+          expect(newGame.board).to.deep.equal(templBoard)
         })
 
         it("updates playerOne.numOfMoves after go", () =>{
-          newGame.makeAMove(playerGoes)
           expect(newGame.playerOne.numOfMoves).to.equal(1)
         })
+
+        describe("checks that player two has a go after player one has made a move", () => {
+          it("playerOne.isCurrentPlayer should be set to false", () => {
+            expect(newGame.playerOne.isCurrentPlayer).to.equal(false)
+          })
+
+          it("playerTwo.isCurrent should be set to true", () => {
+            expect(newGame.playerTwo.isCurrentPlayer).to.equal(true)
+          })
+        })
+
       })
 
     })
