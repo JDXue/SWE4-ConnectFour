@@ -47,6 +47,16 @@
       showPlayerColours(){
         return `Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`
       }
+
+      getPlayerMove(playerMove){
+        return parseInt(playerMove)
+      }
+
+      isValidMove(playerMove){
+        // checks that player input is bigger than 0 and smaller or equal to number of columnss
+        return (playerMove <= this.board[0].length) && (playerMove > 0) ?
+          true : false
+      }
     }
   </script>
   <!-- tests -->
@@ -77,6 +87,27 @@
       })
     })
 
+    describe("playerInput", () => {
+
+      let playerGoes
+      describe("getAPlayerInput", () =>{
+        it("allows user to enter input for a column", () => {
+          playerGoes = 1
+          expect(newGame.getPlayerMove(playerGoes)).to.deep.equal(1)
+        })
+
+        it("checks if player can go in this space", () => {
+          it("has a valid player input", () => {
+            expect(newGame.isValidMove(playerGoes)).to.equal(true)
+          })
+          it("has an invalid player input", () => {
+            expect(newGame.isValidMove(playerGoes)).to.equal(false)
+          })
+        })
+
+      })
+
+    })
 
   </script>
   <script class="mocha-exec">
