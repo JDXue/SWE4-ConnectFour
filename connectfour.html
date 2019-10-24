@@ -57,6 +57,44 @@
         return (playerMove <= this.board[0].length) && (playerMove > 0) ?
           true : false
       }
+
+      getPlayerMove(playerMove){
+        let validMove = false
+        while (!validMove){
+          if(isValidMove(playerMove)){
+            validMove = true
+          }
+          else{
+            console.log(`You can't go there! Please enter a number from 1 to ${this.board[0].length}`)
+          }
+        }
+        this.makeAMove()
+        return parseInt(playerMove)
+      }
+
+      isValidMove(playerMove){
+        // checks that player input is bigger than 0 and smaller or equal to number of columnss
+        if((playerMove > 0) && (playerMove <= this.board[0].length)){
+
+        }
+      }
+
+      makeAMove(playerMove){
+        //adds player move to board in next available row
+        let spaceFound = false
+        let row = 0
+        while(!spaceFound){
+          (this.board[row] == 0) ?
+            spaceFound = true : row++
+        }
+
+        //checks which player's go it is
+        if(this.playerOne.isCurrentPlayer == true){
+          this.board[playerMove][row] = "R"
+        } else{this.board[playerMove][row] = "Y" }
+
+        return this.board
+      }
     }
   </script>
   <!-- tests -->
@@ -66,14 +104,15 @@
   <script>
     // write your tests here
     let newGame
-      beforeEach(() => {
+    let templBoard
+    beforeEach(() => {
           newGame = new connectFour()
         })
     describe("Setup", () => {
       describe("connectFour", () =>{
         it("shows a new board, with no moves", () => {
           //currently set up as a 3x3 board to make logic simpler
-          const templBoard = [
+          templBoard = [
             [0,0,0],
             [0,0,0],
             [0,0,0]
@@ -96,13 +135,18 @@
           expect(newGame.getPlayerMove(playerGoes)).to.deep.equal(1)
         })
 
-        it("checks if player can go in this space", () => {
+        describe("checks if player can go in this space", () => {
           it("has a valid player input", () => {
             expect(newGame.isValidMove(playerGoes)).to.equal(true)
           })
           it("has an invalid player input", () => {
+            playerGoes = 0
             expect(newGame.isValidMove(playerGoes)).to.equal(false)
           })
+        })
+
+        it("displays the player's counter in the 2D array", () => {
+          expect
         })
 
       })
