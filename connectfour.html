@@ -52,10 +52,11 @@
 
       getPlayerMove(playerMove){
         let validMove = false
-        playerMove -= 1 //for purpose of array indexing
+        console.log(playerMove)
         while (!validMove){
           if(this.isValidMove(playerMove)){
             validMove = true
+
           }
           else{
             console.log(`You can't go there! Please enter a number from 1 to ${this.board[0].length}`)
@@ -67,6 +68,7 @@
       }
 
       isValidMove(playerMove){
+        playerMove -= 1 //for purpose of array indexing
         //console.log("column chosen: " + playerMove)
         //console.log(this.board)
 
@@ -85,6 +87,7 @@
       }
 
       makeAMove(playerMove){
+        playerMove -= 1 //for purpose of array indexing
         //console.log(this.board)
         //adds player move to board in next available row
         //debugging below to test splice() on 2D array
@@ -129,21 +132,28 @@
 
       //rest operator used for testing purposes, however be aware that rest operator encases args in an array
       checkForEndGame(...testBoard){
-        testBoard = testBoard[0]
+        let isEndGame = false
+        this.board = testBoard[0]
         //console.log(testBoard[0])
         //console.log(testBoard[1].join(''))
-        testBoard.map((row) => {
-          //console.log(row.join(''))
-          let rowStr = row.join('')
-          let rowWin = /R{3}/ig
-          if(rowStr.includes(rowWin) == true){
-
+        for(let i= 0 ; i < this.board.length; i++){
+          if(this.board[i].join('').includes("RRR")){
+            isEndGame = true
+            console.log('Player 1 wins!')
           }
-        })
-
-
+          else if(this.board[i].join('').includes("YYY")){
+              endGame = true
+              console.log('Player 2 wins')
+            }
+          else{return isEndGame}
+        }
+        return isEndGame
       }
+
+
+
     }
+
   </script>
   <!-- tests -->
   <script>
@@ -189,6 +199,7 @@
           })
           it("has an invalid player input", () => {
             playerGoes = 0
+            console.log(playerGoes)
             expect(newGame.isValidMove(playerGoes)).to.equal(false)
           })
         })
@@ -203,8 +214,7 @@
             [0,0,0],
             ["R",0,0]
           ]
-        //set to 0 for testing purposes
-        playerGoes = 0
+        playerGoes  = 1
         newGame.makeAMove(playerGoes)
         })
 
@@ -231,8 +241,8 @@
     })
 
     describe("Validation of Win/Endgame", () => {
-      describe('after numOfMoves for each player is 4, begin checking for wins', () => {
-        it('should check horiontally for 4 in a row', () => {
+      describe('after numOfMoves for each player is 3, begin checking for wins', () => {
+        it('should check horiontally for 3 in a row', () => {
           templBoard = [
             ["R",'R','R'],
             [0,0,0],
@@ -244,6 +254,8 @@
 
       })
     })
+
+
 
   </script>
   <script class="mocha-exec">
