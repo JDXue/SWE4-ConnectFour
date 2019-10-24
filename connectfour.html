@@ -28,12 +28,14 @@
         this.playerOne = {
           colour : "Red",
           win : false,
+          isCurrentPlayer : true,
           numOfMoves : 0
         }
 
         this.playerTwo = {
           colour : "Yellow",
           win : false,
+          isCurrentPlayer : false,
           numOfMoves : 0
         }
 
@@ -49,49 +51,68 @@
       }
 
       getPlayerMove(playerMove){
-        return parseInt(playerMove)
-      }
-
-      isValidMove(playerMove){
-        // checks that player input is bigger than 0 and smaller or equal to number of columnss
-        return (playerMove <= this.board[0].length) && (playerMove > 0) ?
-          true : false
-      }
-
-      getPlayerMove(playerMove){
         let validMove = false
         while (!validMove){
-          if(isValidMove(playerMove)){
+          if(this.isValidMove(playerMove)){
             validMove = true
           }
           else{
             console.log(`You can't go there! Please enter a number from 1 to ${this.board[0].length}`)
+            playerMove = prompt("Enter a valid number")
           }
         }
-        this.makeAMove()
+        //this.makeAMove(playerMove - 1) //for purpose of accessing correct columns in array
         return parseInt(playerMove)
       }
 
       isValidMove(playerMove){
+        console.log("column chosen: " + playerMove)
+        //console.log(this.board)
         // checks that player input is bigger than 0 and smaller or equal to number of columnss
         if((playerMove > 0) && (playerMove <= this.board[0].length)){
-
+          //then checks that the column is not already full
+          if(this.board[0][playerMove] == 0){
+            return true
+          }
+          else {
+            return false
+            }
         }
+        else return false
       }
 
       makeAMove(playerMove){
+        console.log(this.board)
         //adds player move to board in next available row
+        //debugging below to test splice() on 2D array
+        // console.log("makeAMove(): playerMove =" + playerMove)
+        // console.log("Original board: ")
+        // console.log(this.board)
+        // console.log("Board changed: ")
+        // this.board[2].splice(playerMove,1,"H")
+        // console.log(this.board)
+
         let spaceFound = false
-        let row = 0
+        let row = (this.board.length - 1) //finds the last row
+        //console.log(row)
+        //console.log("this the position I want to take: " + this.board[row][playerMove])
         while(!spaceFound){
-          (this.board[row] == 0) ?
-            spaceFound = true : row++
+          if(this.board[row][playerMove] == 0) {
+            spaceFound = true
+          }
+          else{
+            spaceFound = false
+            row-- //go to check row above
+          }
         }
 
         //checks which player's go it is
         if(this.playerOne.isCurrentPlayer == true){
-          this.board[playerMove][row] = "R"
-        } else{this.board[playerMove][row] = "Y" }
+          this.board[row].splice(playerMove,1,"R")
+        }
+        else{
+          this.board[row].splice(playerMove,1,"Y")
+          }
 
         return this.board
       }
@@ -145,10 +166,19 @@
           })
         })
 
-        it("displays the player's counter in the 2D array", () => {
-          expect
-        })
 
+      })
+
+      describe("makeAMove", () => {
+        it("displays the player's counter in the 2D array", () => {
+          templBoard = [
+            [0,0,0],
+            [0,0,0],
+            ["R",0,0]
+          ]
+          playerGoes = 0
+          expect(newGame.makeAMove(playerGoes)).to.deep.equal(templBoard)
+        })
       })
 
     })
