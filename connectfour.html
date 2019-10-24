@@ -61,28 +61,31 @@
             playerMove = prompt("Enter a valid number")
           }
         }
-        //this.makeAMove(playerMove - 1) //for purpose of accessing correct columns in array
+        this.makeAMove(playerMove)
         return parseInt(playerMove)
       }
 
       isValidMove(playerMove){
-        console.log("column chosen: " + playerMove)
+        //console.log("column chosen: " + playerMove)
         //console.log(this.board)
+
+        //for the purpose of putting counter in correct column in array
+        playerMove -= 1;
         // checks that player input is bigger than 0 and smaller or equal to number of columnss
-        if((playerMove > 0) && (playerMove <= this.board[0].length)){
+        if((playerMove > -1) && (playerMove <= (this.board[0].length -1))){
           //then checks that the column is not already full
           if(this.board[0][playerMove] == 0){
             return true
           }
-          else {
+          else{
             return false
-            }
+          }
         }
         else return false
       }
 
       makeAMove(playerMove){
-        console.log(this.board)
+        //console.log(this.board)
         //adds player move to board in next available row
         //debugging below to test splice() on 2D array
         // console.log("makeAMove(): playerMove =" + playerMove)
@@ -120,8 +123,25 @@
           this.playerOne.isCurrentPlayer = true
           }
 
-
+        console.log(this.board)
         return this.board
+      }
+
+      //rest operator used for testing purposes, however be aware that rest operator encases args in an array
+      checkForEndGame(...testBoard){
+        testBoard = testBoard[0]
+        //console.log(testBoard[0])
+        //console.log(testBoard[1].join(''))
+        testBoard.map((row) => {
+          //console.log(row.join(''))
+          let rowStr = row.join('')
+          let rowWin = /R{3}/ig
+          if(rowStr.includes(rowWin) == true){
+
+          }
+        })
+
+
       }
     }
   </script>
@@ -154,7 +174,7 @@
       })
     })
 
-    describe("playerInput", () => {
+    describe("Player Input", () => {
 
       let playerGoes
       describe("getAPlayerInput", () =>{
@@ -208,6 +228,21 @@
 
       })
 
+    })
+
+    describe("Validation of Win/Endgame", () => {
+      describe('after numOfMoves for each player is 4, begin checking for wins', () => {
+        it('should check horiontally for 4 in a row', () => {
+          templBoard = [
+            ["R",'R','R'],
+            [0,0,0],
+            [0,0,0]
+          ]
+          expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
+
+
+      })
     })
 
   </script>
