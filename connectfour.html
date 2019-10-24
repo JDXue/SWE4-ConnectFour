@@ -18,7 +18,36 @@
   <!-- Main code -->
   <script>
     // write your code here
+    class connectFour{
+      constructor(){
+        this.board = [
+            [0,0,0],
+            [0,0,0],
+            [0,0,0]
+          ]
+        this.playerOne = {
+          colour : "Red",
+          win : false,
+          numOfMoves : 0
+        }
 
+        this.playerTwo = {
+          colour : "Yellow",
+          win : false,
+          numOfMoves : 0
+        }
+
+        this.endGame = false
+
+      }
+
+      showBoard(){
+        return this.board
+      }
+      showPlayerColours(){
+        return `Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`
+      }
+    }
   </script>
   <!-- tests -->
   <script>
@@ -26,6 +55,28 @@
   </script>
   <script>
     // write your tests here
+    let newGame
+      beforeEach(() => {
+          newGame = new connectFour()
+        })
+    describe("Setup", () => {
+      describe("connectFour", () =>{
+        it("shows a new board, with no moves", () => {
+          //currently set up as a 3x3 board to make logic simpler
+          const templBoard = [
+            [0,0,0],
+            [0,0,0],
+            [0,0,0]
+          ]
+          expect(newGame.showBoard()).to.deep.equal(templBoard)
+        })
+
+        it("defines player 1 and 2", () => {
+          expect(newGame.showPlayerColours()).to.equal("Player one: Red | Player two: Yellow")
+        })
+      })
+    })
+
 
   </script>
   <script class="mocha-exec">
