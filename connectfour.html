@@ -52,6 +52,7 @@
 
       getPlayerMove(playerMove){
         let validMove = false
+        playerMove -= 1 //for purpose of array indexing
         while (!validMove){
           if(this.isValidMove(playerMove)){
             validMove = true
@@ -69,8 +70,7 @@
         //console.log("column chosen: " + playerMove)
         //console.log(this.board)
 
-        //for the purpose of putting counter in correct column in array
-        playerMove -= 1;
+
         // checks that player input is bigger than 0 and smaller or equal to number of columnss
         if((playerMove > -1) && (playerMove <= (this.board[0].length -1))){
           //then checks that the column is not already full
