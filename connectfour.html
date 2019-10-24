@@ -28,12 +28,14 @@
         this.playerOne = {
           colour : "Red",
           win : false,
+          isCurrentPlayer : true,
           numOfMoves : 0
         }
 
         this.playerTwo = {
           colour : "Yellow",
           win : false,
+          isCurrentPlayer : false,
           numOfMoves : 0
         }
 
@@ -47,6 +49,100 @@
       showPlayerColours(){
         return `Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`
       }
+
+      getPlayerMove(playerMove){
+        let validMove = false
+        playerMove -= 1 //for purpose of array indexing
+        while (!validMove){
+          if(this.isValidMove(playerMove)){
+            validMove = true
+          }
+          else{
+            console.log(`You can't go there! Please enter a number from 1 to ${this.board[0].length}`)
+            playerMove = prompt("Enter a valid number")
+          }
+        }
+        this.makeAMove(playerMove)
+        return parseInt(playerMove)
+      }
+
+      isValidMove(playerMove){
+        //console.log("column chosen: " + playerMove)
+        //console.log(this.board)
+
+
+        // checks that player input is bigger than 0 and smaller or equal to number of columnss
+        if((playerMove > -1) && (playerMove <= (this.board[0].length -1))){
+          //then checks that the column is not already full
+          if(this.board[0][playerMove] == 0){
+            return true
+          }
+          else{
+            return false
+          }
+        }
+        else return false
+      }
+
+      makeAMove(playerMove){
+        //console.log(this.board)
+        //adds player move to board in next available row
+        //debugging below to test splice() on 2D array
+        // console.log("makeAMove(): playerMove =" + playerMove)
+        // console.log("Original board: ")
+        // console.log(this.board)
+        // console.log("Board changed: ")
+        // this.board[2].splice(playerMove,1,"H")
+        // console.log(this.board)
+
+        let spaceFound = false
+        let row = (this.board.length - 1) //finds the last row
+        //console.log(row)
+        //console.log("this the position I want to take: " + this.board[row][playerMove])
+        while(!spaceFound){
+          if(this.board[row][playerMove] == 0) {
+            spaceFound = true
+          }
+          else{
+            spaceFound = false
+            row-- //go to check row above
+          }
+        }
+
+        //checks which player's go it is
+        if(this.playerOne.isCurrentPlayer == true){
+          this.board[row].splice(playerMove,1,"R")
+          this.playerOne.numOfMoves += 1
+          this.playerOne.isCurrentPlayer = false
+          this.playerTwo.isCurrentPlayer = true
+        }
+        else{
+          this.board[row].splice(playerMove,1,"Y")
+          this.playerOne.numOfMoves += 1
+          this.playerTwo.isCurrentPlayer = false
+          this.playerOne.isCurrentPlayer = true
+          }
+
+        console.log(this.board)
+        return this.board
+      }
+
+      //rest operator used for testing purposes, however be aware that rest operator encases args in an array
+      checkForEndGame(...testBoard){
+        testBoard = testBoard[0]
+        //console.log(testBoard[0])
+        //console.log(testBoard[1].join(''))
+        testBoard.map((row) => {
+          //console.log(row.join(''))
+          let rowStr = row.join('')
+          let rowWin = /R{3}/ig
+          if(rowStr.includes(rowWin) == true){
+
+          }
+        })
+
+
+      }
     }
   </script>
   <!-- tests -->
@@ -56,14 +152,15 @@
   <script>
     // write your tests here
     let newGame
-      beforeEach(() => {
+    let templBoard
+    beforeEach(() => {
           newGame = new connectFour()
         })
     describe("Setup", () => {
       describe("connectFour", () =>{
         it("shows a new board, with no moves", () => {
           //currently set up as a 3x3 board to make logic simpler
-          const templBoard = [
+          templBoard = [
             [0,0,0],
             [0,0,0],
             [0,0,0]
@@ -77,6 +174,76 @@
       })
     })
 
+    describe("Player Input", () => {
+
+      let playerGoes
+      describe("getAPlayerInput", () =>{
+        it("allows user to enter input for a column", () => {
+          playerGoes = 1
+          expect(newGame.getPlayerMove(playerGoes)).to.deep.equal(1)
+        })
+
+        describe("checks if player can go in this space", () => {
+          it("has a valid player input", () => {
+            expect(newGame.isValidMove(playerGoes)).to.equal(true)
+          })
+          it("has an invalid player input", () => {
+            playerGoes = 0
+            expect(newGame.isValidMove(playerGoes)).to.equal(false)
+          })
+        })
+
+
+      })
+
+      describe("makeAMove", () => {
+        beforeEach( () => {
+        templBoard = [
+            [0,0,0],
+            [0,0,0],
+            ["R",0,0]
+          ]
+        //set to 0 for testing purposes
+        playerGoes = 0
+        newGame.makeAMove(playerGoes)
+        })
+
+        it("displays the player's counter in the 2D array", () => {
+          expect(newGame.board).to.deep.equal(templBoard)
+        })
+
+        it("updates playerOne.numOfMoves after go", () =>{
+          expect(newGame.playerOne.numOfMoves).to.equal(1)
+        })
+
+        describe("checks that player two has a go after player one has made a move", () => {
+          it("playerOne.isCurrentPlayer should be set to false", () => {
+            expect(newGame.playerOne.isCurrentPlayer).to.equal(false)
+          })
+
+          it("playerTwo.isCurrent should be set to true", () => {
+            expect(newGame.playerTwo.isCurrentPlayer).to.equal(true)
+          })
+        })
+
+      })
+
+    })
+
+    describe("Validation of Win/Endgame", () => {
+      describe('after numOfMoves for each player is 4, begin checking for wins', () => {
+        it('should check horiontally for 4 in a row', () => {
+          templBoard = [
+            ["R",'R','R'],
+            [0,0,0],
+            [0,0,0]
+          ]
+          expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
+
+
+      })
+    })
 
   </script>
   <script class="mocha-exec">
