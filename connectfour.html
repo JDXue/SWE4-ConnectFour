@@ -47,12 +47,15 @@
       }
 
       showBoard(){
+        console.log(this.board)
         return this.board
       }
       showPlayerColours(){
+        console.log(`Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`)
         return `Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`
       }
 
+      //this method calls all other methods for player related counteer inserts and validation
       getPlayerMove(playerMove){
         let validMove = false
         //console.log(playerMove)
@@ -67,6 +70,12 @@
           }
         }
         this.makeAMove(playerMove)
+        //starts checking for wins or full board
+        if(this.playerTwo.numOfMoves >= 3){
+          if(this.isEndGame()){
+            this.showEndgameMessage()
+          }
+        }
         console.log(this.board)
         return parseInt(playerMove)
       }
@@ -81,6 +90,7 @@
         if((playerMove > -1) && (playerMove <= (this.board[0].length -1))){
           //then checks that the column is not already full
           if(this.board[0][playerMove] == 0){
+
             return true
           }
           else{
