@@ -41,18 +41,24 @@
 
         this.endGame = false
 
+        this.showBoard()
+        this.showPlayerColours()
+
       }
 
       showBoard(){
+        console.log(this.board)
         return this.board
       }
       showPlayerColours(){
+        console.log(`Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`)
         return `Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`
       }
 
+      //this method calls all other methods for player related counteer inserts and validation
       getPlayerMove(playerMove){
         let validMove = false
-        console.log(playerMove)
+        //console.log(playerMove)
         while (!validMove){
           if(this.isValidMove(playerMove)){
             validMove = true
@@ -64,6 +70,13 @@
           }
         }
         this.makeAMove(playerMove)
+        //starts checking for wins or full board
+        if(this.playerTwo.numOfMoves >= 3){
+          if(this.isEndGame()){
+            this.showEndgameMessage()
+          }
+        }
+        console.log(this.board)
         return parseInt(playerMove)
       }
 
@@ -77,6 +90,7 @@
         if((playerMove > -1) && (playerMove <= (this.board[0].length -1))){
           //then checks that the column is not already full
           if(this.board[0][playerMove] == 0){
+
             return true
           }
           else{
@@ -126,16 +140,20 @@
           this.playerOne.isCurrentPlayer = true
           }
 
-        console.log(this.board)
+        //console.log(this.board)
         return this.board
       }
 
       //rest operator used for testing purposes, however be aware that rest operator encases args in an array
       checkForEndGame(...testBoard){
         let isEndGame = false
+        let isFull = false
         this.board = testBoard[0]
+        let columnStr = ''
         //console.log(testBoard[0])
         //console.log(testBoard[1].join(''))
+
+
 
         //checking rows
         for(let i= 0 ; i < this.board.length; i++){
@@ -147,26 +165,77 @@
 
         //checking columns
         for(let i = 0; i < this.board[0].length; i++){
-          let columnStr = ''
+          columnStr = ''
           this.board.map((row) => {
             columnStr += row[i].toString()
           })
 
-          console.log(columnStr)
+          //console.log(columnStr)
            if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
               isEndGame = true
               return isEndGame
            }
-
-
         }
 
-      }
+        //check diagonally in rows and columns
+        //using this.board.length - 4 - 2 allows for loop to only iterate over rows and columns where possible to get four in a row
 
 
+
+          //for left to right
+          columnStr = ''
+          for(let i = 0; i < this.board.length; i++){
+            columnStr += this.board[i][i]
+          }
+
+          //console.log(columnStr)
+          if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+              isEndGame = true
+              return isEndGame
+           }
+          //for right to left
+          else{
+            columnStr = ''
+            for(let i = 0; i < this.board.length; i++){
+              let reverseOrder = this.board.length - 1 - i
+              columnStr += this.board[i][reverseOrder]
+            }
+
+
+            //console.log(columnStr)
+            if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+                isEndGame = true
+                return isEndGame
+
+            }
+            //check if board is full
+            else{
+
+              for(let i = 0; i < this.board.length; i++){
+                if(this.board[i].join('').includes('0')){
+                  isFull = false
+                  break
+                }
+                else{ isFull = true}
+              }
+              console.log(isFull)
+              return isFull ? true : false
+            }
+
+          }
+    }
+
+    showEndgameMessage(winningLine, isFull){
+      //console.log("winning line: "+ winningLine)
+      let endgameMessage = ''
+      isFull ? endgameMessage = 'No more goes, nobody has won': (winningLine.includes("R")) ? endgameMessage = 'Player 1 has won!' : endgameMessage = 'Player 2 has won!'
+      console.log(endgameMessage)
+      return endgameMessage
     }
 
 
+
+  }
 
 
 
@@ -217,7 +286,7 @@
           })
           it("has an invalid player input", () => {
             playerGoes = 0
-            console.log(playerGoes)
+            //console.log(playerGoes)
             expect(newGame.isValidMove(playerGoes)).to.equal(false)
           })
         })
@@ -276,6 +345,48 @@
             [0,'R',0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
+
+        it('should check diagonally from top left for 3 in a row', () => {
+          templBoard = [
+            ['R',0,0],
+            [0,'R',0],
+            [0,0,'R']
+          ]
+          expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
+
+        it('should check diagonally from top right for 3 in a row', () => {
+          templBoard = [
+            [0,0,'R'],
+            [0,'R',0],
+            ['R',0,0]
+          ]
+          expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
+
+        it('should check if board is full', () => {
+          templBoard = [
+            ['R','Y','R'],
+            ['Y','Y','R'],
+            ['R','R','Y']
+          ]
+          expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
+
+        it('should output win message for player 1', () => {
+          let winningRow = "RRR"
+          expect(newGame.showEndgameMessage(winningRow,false)).to.deep.equal('Player 1 has won!')
+        })
+
+        it('should output win message for player 2', () => {
+          let winningRow = "YYY"
+          expect(newGame.showEndgameMessage(winningRow,false)).to.deep.equal("Player 2 has won!")
+        })
+
+        it('say board is full', () => {
+          let winningRow = ""
+          expect(newGame.showEndgameMessage(winningRow,true)).to.deep.equal('No more goes, nobody has won')
         })
 
       })
