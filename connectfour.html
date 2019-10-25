@@ -52,7 +52,7 @@
 
       getPlayerMove(playerMove){
         let validMove = false
-        console.log(playerMove)
+        //console.log(playerMove)
         while (!validMove){
           if(this.isValidMove(playerMove)){
             validMove = true
@@ -126,7 +126,7 @@
           this.playerOne.isCurrentPlayer = true
           }
 
-        console.log(this.board)
+        //console.log(this.board)
         return this.board
       }
 
@@ -134,6 +134,7 @@
       checkForEndGame(...testBoard){
         let isEndGame = false
         this.board = testBoard[0]
+        let columnStr = ''
         //console.log(testBoard[0])
         //console.log(testBoard[1].join(''))
 
@@ -147,26 +148,73 @@
 
         //checking columns
         for(let i = 0; i < this.board[0].length; i++){
-          let columnStr = ''
+          columnStr = ''
           this.board.map((row) => {
             columnStr += row[i].toString()
           })
 
-          console.log(columnStr)
+          //console.log(columnStr)
            if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
               isEndGame = true
               return isEndGame
            }
-
-
         }
 
-      }
+        //check diagonally in rows and columns
+        //using this.board.length - 4 - 2 allows for loop to only iterate over rows and columns where possible to get four in a row
+
+
+
+          //for left to right
+          columnStr = ''
+          for(let i = 0; i < this.board.length; i++){
+            columnStr += this.board[i][i]
+          }
+
+          //console.log(columnStr)
+          if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+              isEndGame = true
+              return isEndGame
+           }
+          //for right to left
+          else{
+            columnStr = ''
+            for(let i = 0; i < this.board.length; i++){
+              let reverseOrder = this.board.length - 1 - i
+              columnStr += this.board[i][reverseOrder]
+            }
+
+
+            console.log(columnStr)
+            if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+                isEndGame = true
+                return isEndGame
+
+            }
+            else{
+              return isEndGame
+            }
+
+          }
+
+          // columnStr = ''
+          // //for right to left
+          // for(let i = 0; i < this.board.length; i++){
+          //   let line = this.board.length - 1 - i
+          //   console.log(this.board[line][line])
+          //   columnStr += this.board[line][line]
+          // }
+
+
+          // console.log(columnStr)
+
 
 
     }
 
 
+
+  }
 
 
 
@@ -184,96 +232,114 @@
     beforeEach(() => {
           newGame = new connectFour()
         })
-    describe("Setup", () => {
-      describe("connectFour", () =>{
-        it("shows a new board, with no moves", () => {
-          //currently set up as a 3x3 board to make logic simpler
-          templBoard = [
-            [0,0,0],
-            [0,0,0],
-            [0,0,0]
-          ]
-          expect(newGame.showBoard()).to.deep.equal(templBoard)
-        })
+    // describe("Setup", () => {
+    //   describe("connectFour", () =>{
+    //     it("shows a new board, with no moves", () => {
+    //       //currently set up as a 3x3 board to make logic simpler
+    //       templBoard = [
+    //         [0,0,0],
+    //         [0,0,0],
+    //         [0,0,0]
+    //       ]
+    //       expect(newGame.showBoard()).to.deep.equal(templBoard)
+    //     })
 
-        it("defines player 1 and 2", () => {
-          expect(newGame.showPlayerColours()).to.equal("Player one: Red | Player two: Yellow")
-        })
-      })
-    })
+    //     it("defines player 1 and 2", () => {
+    //       expect(newGame.showPlayerColours()).to.equal("Player one: Red | Player two: Yellow")
+    //     })
+    //   })
+    // })
 
-    describe("Player Input", () => {
+    // describe("Player Input", () => {
 
-      let playerGoes
-      describe("getAPlayerInput", () =>{
-        it("allows user to enter input for a column", () => {
-          playerGoes = 1
-          expect(newGame.getPlayerMove(playerGoes)).to.deep.equal(1)
-        })
+    //   let playerGoes
+    //   describe("getAPlayerInput", () =>{
+    //     it("allows user to enter input for a column", () => {
+    //       playerGoes = 1
+    //       expect(newGame.getPlayerMove(playerGoes)).to.deep.equal(1)
+    //     })
 
-        describe("checks if player can go in this space", () => {
-          it("has a valid player input", () => {
-            expect(newGame.isValidMove(playerGoes)).to.equal(true)
-          })
-          it("has an invalid player input", () => {
-            playerGoes = 0
-            console.log(playerGoes)
-            expect(newGame.isValidMove(playerGoes)).to.equal(false)
-          })
-        })
+    //     describe("checks if player can go in this space", () => {
+    //       it("has a valid player input", () => {
+    //         expect(newGame.isValidMove(playerGoes)).to.equal(true)
+    //       })
+    //       it("has an invalid player input", () => {
+    //         playerGoes = 0
+    //         //console.log(playerGoes)
+    //         expect(newGame.isValidMove(playerGoes)).to.equal(false)
+    //       })
+    //     })
 
 
-      })
+    //   })
 
-      describe("makeAMove", () => {
-        beforeEach( () => {
-        templBoard = [
-            [0,0,0],
-            [0,0,0],
-            ["R",0,0]
-          ]
-        playerGoes  = 1
-        newGame.makeAMove(playerGoes)
-        })
+    //   describe("makeAMove", () => {
+    //     beforeEach( () => {
+    //     templBoard = [
+    //         [0,0,0],
+    //         [0,0,0],
+    //         ["R",0,0]
+    //       ]
+    //     playerGoes  = 1
+    //     newGame.makeAMove(playerGoes)
+    //     })
 
-        it("displays the player's counter in the 2D array", () => {
-          expect(newGame.board).to.deep.equal(templBoard)
-        })
+    //     it("displays the player's counter in the 2D array", () => {
+    //       expect(newGame.board).to.deep.equal(templBoard)
+    //     })
 
-        it("updates playerOne.numOfMoves after go", () =>{
-          expect(newGame.playerOne.numOfMoves).to.equal(1)
-        })
+    //     it("updates playerOne.numOfMoves after go", () =>{
+    //       expect(newGame.playerOne.numOfMoves).to.equal(1)
+    //     })
 
-        describe("checks that player two has a go after player one has made a move", () => {
-          it("playerOne.isCurrentPlayer should be set to false", () => {
-            expect(newGame.playerOne.isCurrentPlayer).to.equal(false)
-          })
+    //     describe("checks that player two has a go after player one has made a move", () => {
+    //       it("playerOne.isCurrentPlayer should be set to false", () => {
+    //         expect(newGame.playerOne.isCurrentPlayer).to.equal(false)
+    //       })
 
-          it("playerTwo.isCurrent should be set to true", () => {
-            expect(newGame.playerTwo.isCurrentPlayer).to.equal(true)
-          })
-        })
+    //       it("playerTwo.isCurrent should be set to true", () => {
+    //         expect(newGame.playerTwo.isCurrentPlayer).to.equal(true)
+    //       })
+    //     })
 
-      })
+    //   })
 
-    })
+    // })
 
     describe("Validation of Win/Endgame", () => {
       describe('after numOfMoves for each player is 3, begin checking for wins', () => {
-        it('should check horiontally for 3 in a row', () => {
+        // it('should check horiontally for 3 in a row', () => {
+        //   templBoard = [
+        //     [0,0,0],
+        //     ['R','R','R'],
+        //     [0,0,0]
+        //   ]
+        //   expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        // })
+
+        // it('should check vertically for 3 in a row', () => {
+        //   templBoard = [
+        //     [0,'R',0],
+        //     [0,'R',0],
+        //     [0,'R',0]
+        //   ]
+        //   expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        // })
+
+        it('should check diagonally from top left for 3 in a row', () => {
           templBoard = [
-            [0,0,0],
-            ['R','R','R'],
-            [0,0,0]
+            ['R',0,0],
+            [0,'R',0],
+            [0,0,'R']
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
-        it('should check vertically for 3 in a row', () => {
+        it('should check diagonally from top right for 3 in a row', () => {
           templBoard = [
+            [0,0,'R'],
             [0,'R',0],
-            [0,'R',0],
-            [0,'R',0]
+            ['R',0,0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
