@@ -39,7 +39,7 @@
           numOfMoves : 0
         }
 
-        this.endGame = false
+        this.isEndGame = false
 
         this.showBoard()
         this.showPlayerColours()
@@ -55,7 +55,7 @@
         return `Player one: ${this.playerOne.colour} | Player two: ${this.playerTwo.colour}`
       }
 
-      //this method calls all other methods for player related counteer inserts and validation
+
       getPlayerMove(playerMove){
         let validMove = false
         //console.log(playerMove)
@@ -70,13 +70,15 @@
           }
         }
         this.makeAMove(playerMove)
+
+        console.log(this.board)
         //starts checking for wins or full board
         if(this.playerTwo.numOfMoves >= 3){
-          if(this.isEndGame()){
+          if(this.isEndGame){
             this.showEndgameMessage()
           }
         }
-        console.log(this.board)
+
         return parseInt(playerMove)
       }
 
@@ -146,7 +148,6 @@
 
       //rest operator used for testing purposes, however be aware that rest operator encases args in an array
       checkForEndGame(...testBoard){
-        let isEndGame = false
         let isFull = false
         this.board = testBoard[0]
         let columnStr = ''
@@ -158,8 +159,8 @@
         //checking rows
         for(let i= 0 ; i < this.board.length; i++){
           if((this.board[i].join('').includes("RRR")) || (this.board[i].join('').includes('YYY'))){
-            isEndGame = true
-            return isEndGame
+            this.isEndGame = true
+            return this.isEndGame
           }
         }
 
@@ -172,8 +173,8 @@
 
           //console.log(columnStr)
            if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
-              isEndGame = true
-              return isEndGame
+              this.isEndGame = true
+              return this.isEndGame
            }
         }
 
@@ -190,8 +191,8 @@
 
           //console.log(columnStr)
           if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
-              isEndGame = true
-              return isEndGame
+              this.isEndGame = true
+              return this.isEndGame
            }
           //for right to left
           else{
@@ -204,8 +205,8 @@
 
             //console.log(columnStr)
             if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
-                isEndGame = true
-                return isEndGame
+                this.isEndGame = true
+                return this.isEndGame
 
             }
             //check if board is full
@@ -234,8 +235,21 @@
     }
 
 
+    // playGame(){
+
+    //   while(!this.isEndGame){
+    //     let playerGo = prompt("enter a value from 1 to 3 to add a counter")
+    //     this.getPlayerMove(playerGo)
+
+
+    //   }
+    //   console.log(this.board)
+    // }
 
   }
+
+
+
 
 
 
