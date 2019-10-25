@@ -136,23 +136,41 @@
         this.board = testBoard[0]
         //console.log(testBoard[0])
         //console.log(testBoard[1].join(''))
+
+        //checking rows
         for(let i= 0 ; i < this.board.length; i++){
-          if(this.board[i].join('').includes("RRR")){
+          if((this.board[i].join('').includes("RRR")) || (this.board[i].join('').includes('YYY'))){
             isEndGame = true
-            console.log('Player 1 wins!')
+            return isEndGame
           }
-          else if(this.board[i].join('').includes("YYY")){
-              endGame = true
-              console.log('Player 2 wins')
-            }
-          else{return isEndGame}
         }
-        return isEndGame
+
+        //checking columns
+        for(let i = 0; i < this.board[0].length; i++){
+          let columnStr = ''
+          this.board.map((row) => {
+            columnStr += row[i].toString()
+          })
+
+          console.log(columnStr)
+           if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+              isEndGame = true
+              return isEndGame
+           }
+
+
+        }
+
       }
 
 
-
     }
+
+
+
+
+
+
 
   </script>
   <!-- tests -->
@@ -244,13 +262,21 @@
       describe('after numOfMoves for each player is 3, begin checking for wins', () => {
         it('should check horiontally for 3 in a row', () => {
           templBoard = [
-            ["R",'R','R'],
             [0,0,0],
+            ['R','R','R'],
             [0,0,0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
+        it('should check vertically for 3 in a row', () => {
+          templBoard = [
+            [0,'R',0],
+            [0,'R',0],
+            [0,'R',0]
+          ]
+          expect(newGame.checkForEndGame(templBoard)).to.equal(true)
+        })
 
       })
     })
