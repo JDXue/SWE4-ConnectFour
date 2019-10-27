@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Mocha Tests</title>
+  <title>Connect4</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://unpkg.com/mocha/mocha.css" />
 </head>
@@ -21,9 +21,12 @@
     class connectFour{
       constructor(){
         this.board = [
-            [0,0,0],
-            [0,0,0],
-            [0,0,0]
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
           ]
         this.playerOne = {
           colour : "Red",
@@ -47,7 +50,9 @@
       }
 
       showBoard(){
-        console.log(this.board)
+        for(let i = 0; i < this.board.length; i++){
+          console.log(this.board[i].join(''))
+        }
         return this.board
       }
       showPlayerColours(){
@@ -58,7 +63,11 @@
 
       getPlayerMove(playerMove){
         let validMove = false
-        //console.log(playerMove)
+
+        //if the game has already ended, the player will not be able to make any more moves
+        if(this.isEndGame){
+          return 'the game has ended, so you cannot make any more moves'
+        }
         while (!validMove){
           if(this.isValidMove(playerMove)){
             validMove = true
@@ -88,7 +97,6 @@
         //console.log(this.board)
 
 
-        // checks that player input is bigger than 0 and smaller or equal to number of columnss
         if((playerMove > -1) && (playerMove <= (this.board[0].length -1))){
           //then checks that the column is not already full
           if(this.board[0][playerMove] == 0){
@@ -106,13 +114,6 @@
         playerMove -= 1 //for purpose of array indexing
         //console.log(this.board)
         //adds player move to board in next available row
-        //debugging below to test splice() on 2D array
-        // console.log("makeAMove(): playerMove =" + playerMove)
-        // console.log("Original board: ")
-        // console.log(this.board)
-        // console.log("Board changed: ")
-        // this.board[2].splice(playerMove,1,"H")
-        // console.log(this.board)
 
         let spaceFound = false
         let row = (this.board.length - 1) //finds the last row
@@ -148,17 +149,17 @@
 
       //rest operator used for testing purposes, however be aware that rest operator encases args in an array
       checkForEndGame(...testBoard){
+        let playerTwoWin = "RRRR"
+        let playerOneWin = "YYYY"
         let isFull = false
         this.board = testBoard[0]
         let columnStr = ''
         //console.log(testBoard[0])
         //console.log(testBoard[1].join(''))
 
-
-
         //checking rows
         for(let i= 0 ; i < this.board.length; i++){
-          if((this.board[i].join('').includes("RRR")) || (this.board[i].join('').includes('YYY'))){
+          if((this.board[i].join('').includes(playerOneWin)) || (this.board[i].join('').includes(playerTwoWin))){
             this.isEndGame = true
             return this.isEndGame
           }
@@ -172,7 +173,7 @@
           })
 
           //console.log(columnStr)
-           if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+           if((columnStr.includes(playerOneWin)) || (columnStr.includes(playerTwoWin)) ){
               this.isEndGame = true
               return this.isEndGame
            }
@@ -181,8 +182,6 @@
         //check diagonally in rows and columns
         //using this.board.length - 4 - 2 allows for loop to only iterate over rows and columns where possible to get four in a row
 
-
-
           //for left to right
           columnStr = ''
           for(let i = 0; i < this.board.length; i++){
@@ -190,10 +189,11 @@
           }
 
           //console.log(columnStr)
-          if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+          if((columnStr.includes(playerOneWin)) || (columnStr.includes(playerTwoWin)) ){
               this.isEndGame = true
               return this.isEndGame
            }
+
           //for right to left
           else{
             columnStr = ''
@@ -202,13 +202,14 @@
               columnStr += this.board[i][reverseOrder]
             }
 
-
             //console.log(columnStr)
-            if((columnStr.includes("RRR")) || (columnStr.includes("YYY")) ){
+            if((columnStr.includes(playerOneWin)) || (columnStr.includes(playerTwoWin)) ){
                 this.isEndGame = true
                 return this.isEndGame
 
             }
+
+
             //check if board is full
             else{
 
@@ -272,9 +273,12 @@
         it("shows a new board, with no moves", () => {
           //currently set up as a 3x3 board to make logic simpler
           templBoard = [
-            [0,0,0],
-            [0,0,0],
-            [0,0,0]
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0]
           ]
           expect(newGame.showBoard()).to.deep.equal(templBoard)
         })
@@ -311,9 +315,12 @@
       describe("makeAMove", () => {
         beforeEach( () => {
         templBoard = [
-            [0,0,0],
-            [0,0,0],
-            ["R",0,0]
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            ['R',0,0,0,0,0,0]
           ]
         playerGoes  = 1
         newGame.makeAMove(playerGoes)
@@ -342,59 +349,74 @@
     })
 
     describe("Validation of Win/Endgame", () => {
-      describe('after numOfMoves for each player is 3, begin checking for wins', () => {
-        it('should check horiontally for 3 in a row', () => {
+      describe('after numOfMoves for each player is 4, begin checking for wins', () => {
+        it('should check horiontally for 4 in a row', () => {
           templBoard = [
-            [0,0,0],
-            ['R','R','R'],
-            [0,0,0]
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            ['Y','Y','Y','Y',0,0,0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
-        it('should check vertically for 3 in a row', () => {
+        it('should check vertically for 4 in a row', () => {
           templBoard = [
-            [0,'R',0],
-            [0,'R',0],
-            [0,'R',0]
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            [0,0,'R',0,0,0,0],
+            [0,0,'R',0,0,0,0],
+            [0,0,'R',0,0,0,0],
+            [0,0,'R',0,0,0,0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
-        it('should check diagonally from top left for 3 in a row', () => {
+        it('should check diagonally from top left for 4 in a row', () => {
           templBoard = [
-            ['R',0,0],
-            [0,'R',0],
-            [0,0,'R']
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0],
+            ['R',0,0,0,0,0,0],
+            [0,'R',0,0,0,0,0],
+            [0,0,'R','R',0,0,0],
+            [0,0,0,'R',0,0,0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
-        it('should check diagonally from top right for 3 in a row', () => {
+        it('should check diagonally from top right for 4 in a row', () => {
           templBoard = [
-            [0,0,'R'],
-            [0,'R',0],
-            ['R',0,0]
+            [0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,'R'],
+            [0,0,0,0,'R',0,0],
+            [0,0,0,'R',0,0,0],
+            [0,0,'R',0,0,0,0],
+            [0,'R',0,0,0,0,0]
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
         it('should check if board is full', () => {
           templBoard = [
-            ['R','Y','R'],
-            ['Y','Y','R'],
-            ['R','R','Y']
+            ['R','Y','R','R','R','Y','R'],
+            ['Y','R','Y','Y','Y','R','Y'],
+            ['R','Y','R','R','R','Y','R'],
+            ['R','Y','R','R','R','Y','R'],
+            ['Y','R','Y','Y','Y','R','Y'],
+            ['R','Y','R','R','R','Y','R']
           ]
           expect(newGame.checkForEndGame(templBoard)).to.equal(true)
         })
 
         it('should output win message for player 1', () => {
-          let winningRow = "RRR"
+          let winningRow = "RRRR"
           expect(newGame.showEndgameMessage(winningRow,false)).to.deep.equal('Player 1 has won!')
         })
 
         it('should output win message for player 2', () => {
-          let winningRow = "YYY"
+          let winningRow = "YYYY"
           expect(newGame.showEndgameMessage(winningRow,false)).to.deep.equal("Player 2 has won!")
         })
 
